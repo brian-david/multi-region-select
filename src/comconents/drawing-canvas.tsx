@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Group } from "react-konva";
 import Konva from "konva";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const DrawAnnotations = () => {
 	let width = 640;
@@ -119,7 +119,7 @@ const DrawAnnotations = () => {
 			var layer = this.getLayer();
 			document.body.style.cursor = 'default';
 			this.hitStrokeWidth(2);
-			if (layer){
+			if (layer) {
 				layer.draw();
 			}
 		});
@@ -181,6 +181,17 @@ const DrawAnnotations = () => {
 			height={700}
 		>
 			<Layer>
+				<Group x={50} y={50} draggable={true}>
+					<Rect
+						x={0}
+						y={0}
+						width={300}
+						height={200}
+						fill={"rgba(124,240,10,0.5)"}
+						stroke={'black'}
+						strokeWidth={2}
+					/>
+				</Group>
 				{annotationsToDraw.map(value => {
 					return (
 						<Rect
