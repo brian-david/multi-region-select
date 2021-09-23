@@ -3,17 +3,17 @@ import { Stage, Layer, Rect } from "react-konva";
 import { useState } from "react";
 
 const DrawAnnotations = () => {
-	const [annotations, setAnnotations] = useState([]);
-	const [newAnnotation, setNewAnnotation] = useState([]);
+	const [annotations, setAnnotations] = useState<any>([]);
+	const [newAnnotation, setNewAnnotation] = useState<any>([]);
 
-	const handleMouseDown = event => {
+	const handleMouseDown = (event:any) => {
 		if (newAnnotation.length === 0) {
 			const { x, y } = event.target.getStage().getPointerPosition();
 			setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
 		}
 	};
 
-	const handleMouseUp = event => {
+	const handleMouseUp = (event:any) => {
 		if (newAnnotation.length === 1) {
 			const sx = newAnnotation[0].x;
 			const sy = newAnnotation[0].y;
@@ -31,7 +31,7 @@ const DrawAnnotations = () => {
 		}
 	};
 
-	const handleMouseMove = event => {
+	const handleMouseMove = (event:any) => {
 		if (newAnnotation.length === 1) {
 			const sx = newAnnotation[0].x;
 			const sy = newAnnotation[0].y;
