@@ -1,4 +1,5 @@
 import React from "react";
+import { Zone } from "../classes/zone";
 
 function DynamicCanvas(){
    const zones = [];
