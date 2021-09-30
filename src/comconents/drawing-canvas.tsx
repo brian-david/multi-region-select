@@ -1,9 +1,19 @@
-import ReactDOM from "react-dom";
 import { Stage, Layer, Rect, Group } from "react-konva";
 import Konva from "konva";
 import React, { useState } from "react";
+import { ReactReduxContext, useStore } from "react-redux";
+import drawSlice from "../drawSlice";
+import { Mode } from "./mode";
+
+//State dependency
+// If drawState = true, then you can create new rectangles, cannot interact with the existing rectangles
+// If drawState = false, cannot create new rectangles, can move and resize existing shapes
 
 const DrawAnnotations = () => {
+	const store = useStore();
+
+	console.log("RESULT OF store.getState() " + store.getState().drawState.value);
+
 	let width = 640;
 	let height = 480;
 
@@ -173,39 +183,31 @@ const DrawAnnotations = () => {
 
 	const annotationsToDraw = [...annotations, ...newAnnotation];
 	return (
-		<Stage
-			onMouseDown={handleMouseDown}
-			onMouseUp={handleMouseUp}
-			onMouseMove={handleMouseMove}
-			width={900}
-			height={700}
-		>
-			<Layer>
-				<Group x={50} y={50} draggable={true}>
-					<Rect
-						x={0}
-						y={0}
-						width={300}
-						height={200}
-						fill={"rgba(124,240,10,0.5)"}
-						stroke={'black'}
-						strokeWidth={2}
-					/>
-				</Group>
-				{annotationsToDraw.map(value => {
-					return (
-						<Rect
-							x={value.x}
-							y={value.y}
-							width={value.width}
-							height={value.height}
-							fill="transparent"
-							stroke="black"
-						/>
-					);
-				})}
-			</Layer>
-		</Stage>
+		<React.Fragment>
+			<Mode></Mode>
+			<Stage
+				onMouseDown={handleMouseDown}
+				onMouseUp={handleMouseUp}
+				onMouseMove={handleMouseMove}
+				width={900}
+				height={700}
+			>
+				<Layer listening={store.getState().drawState.value}>
+					{annotationsToDraw.map(value => {
+						return (
+							<Rect
+								x={value.x}
+								y={value.y}
+								width={value.width}
+								height={value.height}
+								fill="transparent"
+								stroke="black"
+							/>
+						);
+					})}
+				</Layer>
+			</Stage>
+		</React.Fragment>
 	);
 };
 
