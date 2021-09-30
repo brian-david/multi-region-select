@@ -3,6 +3,7 @@ import Konva from "konva";
 import React, { useState } from "react";
 import { ReactReduxContext, useStore } from "react-redux";
 import drawSlice from "../drawSlice";
+import { Mode } from "./mode";
 
 //State dependency
 // If drawState = true, then you can create new rectangles, cannot interact with the existing rectangles
@@ -183,6 +184,7 @@ const DrawAnnotations = () => {
 	const annotationsToDraw = [...annotations, ...newAnnotation];
 	return (
 		<React.Fragment>
+			<Mode></Mode>
 			<Stage
 				onMouseDown={handleMouseDown}
 				onMouseUp={handleMouseUp}
