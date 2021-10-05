@@ -14,6 +14,8 @@ import Zone from "./Zone";
 const ZoningCanvas = () => {
 	const store = useStore();
 
+	
+
 	let width = 640;
 	let height = 480;
 
@@ -155,13 +157,14 @@ const ZoningCanvas = () => {
 				const sx = newZone[0].x;
 				const sy = newZone[0].y;
 				const { x, y } = event.target.getStage().getPointerPosition();
-				const zoneToAdd = {
+				const zoneToAdd = new Zone({
 					x: sx,
 					y: sy,
 					width: x - sx,
 					height: y - sy,
+					zoneType: "default",
 					key: zones.length + 1
-				};
+				});
 				zones.push(zoneToAdd);
 				setNewZone([]);
 				setZones(zones);
@@ -195,6 +198,7 @@ const ZoningCanvas = () => {
 			setDrawingState(true);
 		}
 		console.log(drawingState);
+		//addAnchor(zones, )
 	}
 
 	const zonesToDraw = [...zones, ...newZone];

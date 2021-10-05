@@ -1,6 +1,7 @@
 import React from "react";
 import { Rect } from "react-konva";
 
+//need access to the canvas draw state here (in the child component) (redux???)
 class Zone extends React.Component<any, any, any> {
 
    private x: number;
@@ -22,12 +23,13 @@ class Zone extends React.Component<any, any, any> {
    render() {
       return (
          <Rect
+            draggable
             x={this.x}
             y={this.y}
             width={this.width}
             height={this.height}
             fill="transparent"
-            stroke="black"
+            stroke="green"
          />
       )
    }
