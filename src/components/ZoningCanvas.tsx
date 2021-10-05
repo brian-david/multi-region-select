@@ -1,19 +1,18 @@
-import { Stage, Layer, Rect, Group } from "react-konva";
+import { Stage, Layer, Rect, Transformer } from "react-konva";
 import Konva from "konva";
 import React, { useState } from "react";
-import { ReactReduxContext, useStore } from "react-redux";
+import { useStore } from "react-redux";
 import drawSlice from "../drawSlice";
 import { Mode } from "./mode";
-import './drawing-canvas.css';
+import './ZoningCanvas.css';
+import Zone from "./Zone";
 
 //State dependency
 // If drawState = true, then you can create new rectangles, cannot interact with the existing rectangles
 // If drawState = false, cannot create new rectangles, can move and resize existing shapes
 
-const DrawAnnotations = () => {
+const ZoningCanvas = () => {
 	const store = useStore();
-
-	console.log("RESULT OF store.getState() " + store.getState().drawState.value);
 
 	let width = 640;
 	let height = 480;
@@ -137,40 +136,47 @@ const DrawAnnotations = () => {
 		group.add(anchor);
 	}
 
-	const [annotations, setAnnotations] = useState<any>([]);
-	const [newAnnotation, setNewAnnotation] = useState<any>([]);
+	const [zones, setZones] = useState<any>([]);
+	const [newZone, setNewZone] = useState<any>([]);
+	const [drawingState, setDrawingState] = useState<boolean>(true);
 
 	const handleMouseDown = (event: any) => {
-		if (newAnnotation.length === 0) {
-			const { x, y } = event.target.getStage().getPointerPosition();
-			setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
+		if (!drawingState){
+			if (newZone.length === 0) {
+				const { x, y } = event.target.getStage().getPointerPosition();
+				setNewZone([{ x, y, width: 0, height: 0, key: "0" }]);
+			}
 		}
 	};
 
 	const handleMouseUp = (event: any) => {
-		if (newAnnotation.length === 1) {
-			const sx = newAnnotation[0].x;
-			const sy = newAnnotation[0].y;
-			const { x, y } = event.target.getStage().getPointerPosition();
-			const annotationToAdd = {
-				x: sx,
-				y: sy,
-				width: x - sx,
-				height: y - sy,
-				key: annotations.length + 1
-			};
-			annotations.push(annotationToAdd);
-			setNewAnnotation([]);
-			setAnnotations(annotations);
+		if (!drawingState){
+			if (setNewZone.length === 1) {
+				const sx = newZone[0].x;
+				const sy = newZone[0].y;
+				const { x, y } = event.target.getStage().getPointerPosition();
+				const zoneToAdd = {
+					x: sx,
+					y: sy,
+					width: x - sx,
+					height: y - sy,
+					key: zones.length + 1
+				};
+				zones.push(zoneToAdd);
+				setNewZone([]);
+				setZones(zones);
+			}
+			console.log(zones);
 		}
+		
 	};
 
 	const handleMouseMove = (event: any) => {
-		if (newAnnotation.length === 1) {
-			const sx = newAnnotation[0].x;
-			const sy = newAnnotation[0].y;
+		if (newZone.length === 1) {
+			const sx = newZone[0].x;
+			const sy = newZone[0].y;
 			const { x, y } = event.target.getStage().getPointerPosition();
-			setNewAnnotation([
+			setNewZone([
 				{
 					x: sx,
 					y: sy,
@@ -182,9 +188,19 @@ const DrawAnnotations = () => {
 		}
 	};
 
-	const annotationsToDraw = [...annotations, ...newAnnotation];
+	const changeDrawingState = () => {
+		if (drawingState) {
+			setDrawingState(false)
+		} else {
+			setDrawingState(true);
+		}
+		console.log(drawingState);
+	}
+
+	const zonesToDraw = [...zones, ...newZone];
 	return (
 		<React.Fragment>
+			<button onClick={changeDrawingState}>Change State</button>
 			<Mode></Mode>
 			<Stage
 				onMouseDown={handleMouseDown}
@@ -193,17 +209,26 @@ const DrawAnnotations = () => {
 				width={900}
 				height={700}
 			>
-				<Layer listening={store.getState().drawState.value}>
-					{annotationsToDraw.map(value => {
+				<Layer>
+					{zonesToDraw.map(value => {
 						return (
-							<Rect
-								x={value.x}
-								y={value.y}
-								width={value.width}
-								height={value.height}
-								fill="transparent"
-								stroke="black"
-							/>
+							<React.Fragment>
+								{/* why is zone not rendering dynamically????? react-dom rendering????*/}
+								<Zone
+									x={value.x}
+									y={value.y}
+									width={value.width}
+									height={value.height}
+								/>
+								<Rect
+									x={value.x}
+									y={value.y}
+									width={value.width}
+									height={value.height}
+									fill="transparent"
+									stroke="black"
+								/>
+							</React.Fragment>
 						);
 					})}
 				</Layer>
@@ -212,4 +237,4 @@ const DrawAnnotations = () => {
 	);
 };
 
-export default DrawAnnotations
+export default ZoningCanvas
