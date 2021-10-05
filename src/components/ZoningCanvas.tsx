@@ -14,8 +14,6 @@ import Zone from "./Zone";
 const ZoningCanvas = () => {
 	const store = useStore();
 
-	
-
 	let width = 640;
 	let height = 480;
 
@@ -143,7 +141,7 @@ const ZoningCanvas = () => {
 	const [drawingState, setDrawingState] = useState<boolean>(true);
 
 	const handleMouseDown = (event: any) => {
-		if (!drawingState){
+		if (!drawingState) {
 			if (newZone.length === 0) {
 				const { x, y } = event.target.getStage().getPointerPosition();
 				setNewZone([{ x, y, width: 0, height: 0, key: "0" }]);
@@ -152,7 +150,7 @@ const ZoningCanvas = () => {
 	};
 
 	const handleMouseUp = (event: any) => {
-		if (!drawingState){
+		if (!drawingState) {
 			if (setNewZone.length === 1) {
 				const sx = newZone[0].x;
 				const sy = newZone[0].y;
@@ -171,7 +169,7 @@ const ZoningCanvas = () => {
 			}
 			console.log(zones);
 		}
-		
+
 	};
 
 	const handleMouseMove = (event: any) => {
@@ -201,11 +199,32 @@ const ZoningCanvas = () => {
 		//addAnchor(zones, )
 	}
 
+	const handleDragStart = (e: any) => {
+		const id = e.target.id();
+		setZones(
+			zones.map((zone: any) => {
+				return {
+					...zone,
+					isDragging: zone.id === id,
+				};
+			})
+		);
+	};
+	const handleDragEnd = (e: any) => {
+		setZones(
+			zones.map((zone: any) => {
+				return {
+					...zone,
+					isDragging: false,
+				};
+			})
+		);
+	};
+
 	const zonesToDraw = [...zones, ...newZone];
 	return (
 		<React.Fragment>
 			<button onClick={changeDrawingState}>Change State</button>
-			<Mode></Mode>
 			<Stage
 				onMouseDown={handleMouseDown}
 				onMouseUp={handleMouseUp}
@@ -213,6 +232,16 @@ const ZoningCanvas = () => {
 				width={900}
 				height={700}
 			>
+				<Layer>
+					{zones.map((zone: any) => (
+						<Zone
+							x={zone.x}
+							y={zone.y}
+							height={zone.height}
+							width={zone.width}
+						/>
+					))}
+				</Layer>
 				<Layer>
 					{zonesToDraw.map(value => {
 						return (
@@ -223,15 +252,11 @@ const ZoningCanvas = () => {
 									y={value.y}
 									width={value.width}
 									height={value.height}
+									draggable
+									onDragStart={handleDragStart}
+									onDragEnd={handleDragEnd}
 								/>
-								<Rect
-									x={value.x}
-									y={value.y}
-									width={value.width}
-									height={value.height}
-									fill="transparent"
-									stroke="black"
-								/>
+								
 							</React.Fragment>
 						);
 					})}
